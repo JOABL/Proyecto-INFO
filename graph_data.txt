@@ -1,0 +1,9 @@
+Node,A,1,20
+Node,B,8,17
+Node,C,15,20
+Node,D,18,15
+Node,E,2,4
+Segment,AB,A,B
+Segment,BC,B,C
+Segment,CD,C,D
+Segment,AE,A,E
