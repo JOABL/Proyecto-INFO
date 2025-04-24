@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from node import *
 from segment import*
+from path import *
 class Graph:
     def __init__(self):
         self.nodes=[]
@@ -117,4 +118,38 @@ def LoadGraphFromFile(filename):
                 AddSegment(g, name, origin, destination)
 
     return g
+def SaveGraphToFile(graph, filename):
+    with open(filename, 'w') as file:
+        for node in graph.nodes:
+            file.write(f"Node,{node.name},{node.x},{node.y}\n")
+        for segment in graph.segments:
+            file.write(f"Segment,{segment.name},{segment.origin.name},{segment.destination.name}\n")
 
+
+def FindShortestPath(graph, name_origin, name_destination):
+    origin = next((n for n in graph.nodes if n.name == name_origin), None)
+    destination = next((n for n in graph.nodes if n.name == name_destination), None)
+
+    if origin is None or destination is None:
+        return None
+
+    caminos = [CaminoMasCorto([origin])]
+
+    while caminos:
+
+        caminos.sort(key=lambda c: CostToNode(c, c.nodes[-1]) + Distance(c.nodes[-1], destination))
+        mejor_camino = caminos.pop(0)
+        ultimo_nodo = mejor_camino.nodes[-1]
+
+        if ultimo_nodo == destination:
+            return mejor_camino
+
+        for vecino in ultimo_nodo.neighbors:
+            if ContainsNode(mejor_camino, vecino):
+                continue
+
+            nuevo_camino = CaminoMasCorto(mejor_camino.nodes.copy())
+            AddNodeToPath(nuevo_camino, vecino)
+            caminos.append(nuevo_camino)
+
+    return None
